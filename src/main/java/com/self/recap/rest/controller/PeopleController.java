@@ -28,6 +28,6 @@ public class PeopleController {
 
     @GetMapping("/{id}")
     public Person getById(@PathVariable("id") int id) {
-        return peopleService.find(id);
+        return peopleService.find(id); // convert to JSON by Jackson lib
     }
 }
