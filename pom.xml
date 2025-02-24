@@ -27,6 +27,7 @@
 		<url/>
 	</scm>
 	<properties>
+		<hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
@@ -42,7 +43,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate-validator.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>

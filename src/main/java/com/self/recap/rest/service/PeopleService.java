@@ -28,5 +28,10 @@ public class PeopleService {
         return repository.findById(id).orElseThrow(PersonNotFoundException::new);
     }
 
+    @Transactional
+    public Person save(Person person){
+        return repository.save(person);
+    }
+
 }
 
