@@ -7,11 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 public class PeopleService {
+
+    private static final String API_USERNAME = "api_user";
 
     private final PeopleRepository repository;
 
@@ -29,7 +32,10 @@ public class PeopleService {
     }
 
     @Transactional
-    public Person save(Person person){
+    public Person save(Person person) {
+        person.setCreatedAt(LocalDateTime.now());
+        person.setUpdatedAt(LocalDateTime.now());
+        person.setCreatedBy(API_USERNAME);
         return repository.save(person);
     }
 

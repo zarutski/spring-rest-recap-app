@@ -1,5 +1,6 @@
 package com.self.recap.rest.controller;
 
+import com.self.recap.rest.dto.PersonDTO;
 import com.self.recap.rest.exception.PersonNotCreatedException;
 import com.self.recap.rest.model.Person;
 import com.self.recap.rest.service.PeopleService;
@@ -41,13 +42,29 @@ public class PeopleController {
 
     // validation added for input requests [simple body validation]
     @PostMapping
-    public ResponseEntity<HttpStatus> create(@RequestBody @Valid Person person, BindingResult bindingResult) {
+    public ResponseEntity<PersonDTO> create(@RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             String message = formErrorMessage(bindingResult);
             throw new PersonNotCreatedException(message);
         }
-        peopleService.save(person);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        Person persisted = peopleService.save(convertToPerson(personDTO));
+        return new ResponseEntity<>(convertToDTO(persisted), HttpStatus.CREATED);
+    }
+
+    private Person convertToPerson(@Valid PersonDTO personDTO) {
+        Person person = new Person();
+        person.setName(personDTO.getName());
+        person.setAge(personDTO.getAge());
+        person.setEmail(personDTO.getEmail());
+        return person;
+    }
+
+    private PersonDTO convertToDTO(Person person) {
+        PersonDTO personDTO = new PersonDTO();
+        personDTO.setName(person.getName());
+        personDTO.setAge(person.getAge());
+        personDTO.setEmail(person.getEmail());
+        return personDTO;
     }
 
     private String formErrorMessage(BindingResult bindingResult) {
