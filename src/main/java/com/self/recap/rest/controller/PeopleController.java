@@ -5,6 +5,7 @@ import com.self.recap.rest.exception.PersonNotCreatedException;
 import com.self.recap.rest.model.Person;
 import com.self.recap.rest.service.PeopleService;
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,19 +26,22 @@ public class PeopleController {
 
     private final PeopleService peopleService;
 
+    private final ModelMapper mapper;
+
     @Autowired
-    public PeopleController(PeopleService peopleService) {
+    public PeopleController(PeopleService peopleService, ModelMapper mapper) {
         this.peopleService = peopleService;
+        this.mapper = mapper;
     }
 
     @GetMapping
-    public List<Person> getPeople() {
-        return peopleService.findAll();
+    public List<PersonDTO> getPeople() {
+        return peopleService.findAll().stream().map(this::convertToDTO).toList();
     }
 
     @GetMapping("/{id}")
-    public Person getById(@PathVariable("id") int id) {
-        return peopleService.find(id); // convert to JSON by Jackson lib
+    public PersonDTO getById(@PathVariable("id") int id) {
+        return convertToDTO(peopleService.find(id)); // convert to JSON by Jackson lib
     }
 
     // validation added for input requests [simple body validation]
@@ -51,20 +55,12 @@ public class PeopleController {
         return new ResponseEntity<>(convertToDTO(persisted), HttpStatus.CREATED);
     }
 
-    private Person convertToPerson(@Valid PersonDTO personDTO) {
-        Person person = new Person();
-        person.setName(personDTO.getName());
-        person.setAge(personDTO.getAge());
-        person.setEmail(personDTO.getEmail());
-        return person;
+    private Person convertToPerson(PersonDTO personDTO) {
+        return mapper.map(personDTO, Person.class);
     }
 
     private PersonDTO convertToDTO(Person person) {
-        PersonDTO personDTO = new PersonDTO();
-        personDTO.setName(person.getName());
-        personDTO.setAge(person.getAge());
-        personDTO.setEmail(person.getEmail());
-        return personDTO;
+        return mapper.map(person, PersonDTO.class);
     }
 
     private String formErrorMessage(BindingResult bindingResult) {

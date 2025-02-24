@@ -38,6 +38,4 @@ public class PeopleService {
         person.setCreatedBy(API_USERNAME);
         return repository.save(person);
     }
-
 }
-
